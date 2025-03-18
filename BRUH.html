@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruh Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        canvas { display: block; margin: 10px auto; border: 1px solid black; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image to Bruh Converter</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="convertToBruh()">Convert to Bruh</button>
+        <a id="downloadLink" style="display:none;" download="converted.bruh">Download .bruh</a>
+        
+        <h2>Display a .bruh File</h2>
+        <input type="file" id="bruhInput" accept=".bruh">
+        <button onclick="displayBruh()">Display</button>
+        <canvas id="bruhCanvas"></canvas>
+    </div>
+
+    <script>
+        function convertToBruh() {
+            const fileInput = document.getElementById('imageInput');
+            if (!fileInput.files.length) return alert("Select an image");
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    let bruhData = [];
+                    
+                    bruhData.push(...new Uint8Array(new Int32Array([img.width]).buffer));
+                    bruhData.push(...new Uint8Array(new Int32Array([img.height]).buffer));
+                    
+                    for (let y = 0; y < img.height; y++) {
+                        let row = [];
+                        for (let x = 0; x < img.width; x++) {
+                            const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+                            let hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+                            row.push(hex);
+                        }
+                        bruhData.push(...new TextEncoder().encode(row.join('')));
+                        bruhData.push(10);
+                    }
+                    
+                    const blob = new Blob([new Uint8Array(bruhData)], {type: 'application/octet-stream'});
+                    const url = URL.createObjectURL(blob);
+                    const link = document.getElementById('downloadLink');
+                    link.href = url;
+                    link.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+
+        function displayBruh() {
+            const fileInput = document.getElementById('bruhInput');
+            if (!fileInput.files.length) return alert("Select a .bruh file");
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const bruhData = new Uint8Array(event.target.result);
+                
+                const width = new DataView(bruhData.buffer).getInt32(0, true);
+                const height = new DataView(bruhData.buffer).getInt32(4, true);
+                
+                const canvas = document.getElementById('bruhCanvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                
+                let index = 8;
+                let bruhHexData = new TextDecoder().decode(bruhData.slice(index)).split('\n');
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        let hex = bruhHexData[y].slice(x * 6, (x + 1) * 6);
+                        let r = parseInt(hex.slice(0, 2), 16);
+                        let g = parseInt(hex.slice(2, 4), 16);
+                        let b = parseInt(hex.slice(4, 6), 16);
+                        ctx.fillStyle = `rgb(${r},${g},${b})`;
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            };
+            reader.readAsArrayBuffer(fileInput.files[0]);
+        }
+    </script>
+</body>
+</html>

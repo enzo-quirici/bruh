@@ -1,40 +1,40 @@
-# BRUHIFF
+# BRUHIFF Web Version
 **B**lazingly **r**apid **u**ncompressed **h**arebrained Image File Format.
 
-Also known as BRUHIFF or BRUH.
+This is a web-based implementation of the BRUH image format converter.
 
-![Example](https://cdn.discordapp.com/attachments/1074408238939906220/1130764354661384192/image.png)
+## Features
+- Convert standard image files (PNG, JPG, etc.) into `.bruh` format.
+- Save and download the converted `.bruh` file.
+- Load and display `.bruh` files in a canvas.
 
-# How to
-1. Download the repo / `git clone` it.
-2. Open a command prompt in the directory / `cd bruh`
-3. Run `cargo run compile` followed by a `path/to/image.png` to compile PNG to BRUH. Example: `cargo run compile C:\Uses\User\Downloads\image.png`
+## How to Use
 
-4. Run `cargo run` followed by a `path/to/image.bruh` to show the image
+### Convert an Image to BRUH Format
+1. Open the webpage.
+2. Click on the **Choose File** button to select an image file.
+3. Click **Convert to Bruh** to generate a `.bruh` file.
+4. A **Download .bruh** link will appear. Click to save the file.
 
-## OR
-1. Double-click on `image.bruh` using your File Explorer.
-2. Click on `More Apps`
+### Display a BRUH File
+1. Open the webpage.
+2. Click on the **Choose File** button under **Display a .bruh File**.
+3. Click **Display** to render the image on the canvas.
 
-![More Apps](https://cdn.discordapp.com/attachments/1074408238939906220/1130765375693406258/image.png)
+## Technical Details
+- Uses an HTML5 `<canvas>` to read and manipulate image data.
+- Converts RGB pixel data to a hex-based encoding.
+- Encodes image dimensions at the beginning of the `.bruh` file.
+- Decodes `.bruh` files and renders them back onto the `<canvas>`.
 
-3. Click on `Choose app from this PC`
+## Limitations
+- No transparency support.
+- Large images may result in very large `.bruh` files.
+- Encoding and decoding operations may be slow for large images.
 
-![Choose app](https://cdn.discordapp.com/attachments/1074408238939906220/1130765548813308034/image.png)
+## Future Improvements
+- Optimize file format for smaller file sizes.
+- Improve decoding speed.
+- Support transparency.
+- Add drag-and-drop functionality for convenience.
 
-Tip: tick "Always use this app to open .bruh files"
-
-4. Type the `path/to/this/project`.
-5. Select `bruh.exe` inside this folder.
-
-That's it! You can now open `.bruh` files!
-
-# Known issues
-⚠ The PNG > BRUH won't work unless you have the same file (i.e. image.png) but with the .bruh extension (i.e. image.bruh). What do you have to do? Create an empty file called `image.bruh`.
-
-1. Preview window width & height are not exact.
-2. Huge file size on large images.
-3. Slow preview window.
-4. Some large images might include `#0` hex which will crash the program.
-5. No transparency.
-6. Only works on Windows
